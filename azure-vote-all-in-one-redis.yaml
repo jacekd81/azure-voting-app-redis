@@ -36,7 +36,7 @@ spec:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
-  minReadySeconds: 5 
+  minReadySeconds: 5
   template:
     metadata:
       labels:
@@ -44,7 +44,8 @@ spec:
     spec:
       containers:
       - name: azure-vote-front
-        image: microsoft/azure-vote-front:v1
+        image: us6registry0001.azurecr.io/azure-vote-front:v1
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         resources:
@@ -55,11 +56,15 @@ spec:
         env:
         - name: REDIS
           value: "azure-vote-back"
+      imagePullSecrets:
+      - name: acr-cont
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: azure-vote-front
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 spec:
   type: LoadBalancer
   ports:
